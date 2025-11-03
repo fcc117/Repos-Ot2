@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
-import { Login } from './pages/login/login';
 import { Layout } from './layout/components/layout/layout';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { AuthGuard } from './core/services/auth-guard';
+import { AuthGuard } from './core/services/login/auth-guard';
+import { TICKETS_ROUTES } from './pages/tickets/tickets.routes';
+
 export const routes: Routes = [
   {
     path: '',
@@ -15,9 +15,35 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
+    path: 'sesionexistente',
+    loadComponent: () =>
+      import('./pages/alertas/sesionexistente/sesionexistente').then((m) => m.Sesionexistente),
+  },
+  {
+    path: 'perfilnoautorizado',
+    loadComponent: () =>
+      import('./pages/alertas/perfilnoautorizado/perfilnoautorizado').then(
+        (m) => m.Perfilnoautorizado
+      ),
+  },
+  {
+    path: 'sinacceso',
+    loadComponent: () => import('./pages/alertas/sinacceso/sinacceso').then((m) => m.Sinacceso),
+  },
+  {
+    path: 'error',
+    loadComponent: () => import('./pages/alertas/error/error').then((m) => m.Error),
+  },
+  {
     path: 'inicio',
     component: Layout,
     canActivate: [AuthGuard],
     children: [{ path: '', component: Dashboard }],
+  },
+  {
+    path: 'tickets',
+    component: Layout,
+    canActivate: [AuthGuard],
+    children: TICKETS_ROUTES,
   },
 ];

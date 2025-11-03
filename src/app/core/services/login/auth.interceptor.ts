@@ -8,7 +8,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthService } from './auth-service';
-import { IResponseData } from '../interfaces/IResponseData';
+import { IResponseData } from '../../interfaces/IResponseData';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

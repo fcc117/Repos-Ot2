@@ -3,6 +3,7 @@
 
 export interface IResponseData {
   data: any;
+  datalist: [];
   objectlist: any;
   objects: null;
   value: number;

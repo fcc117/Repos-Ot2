@@ -1,0 +1,73 @@
+<div class="flex items-center justify-center min-h-screen overflow-hidden">
+  <div class="flex flex-col items-center justify-center">
+    <div
+      style="
+        border-radius: 56px;
+        padding: 0.3rem;
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--primary-color), transparent 60%) 10%,
+          var(--surface-ground) 30%
+        );
+      "
+    >
+      <div
+        class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20 flex flex-col items-center"
+        style="border-radius: 53px"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          stroke="currentColor"
+          class="size-30"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <defs>
+              <style>
+                .cls-1 {
+                  fill: none;
+                  stroke: #1c274c;
+                  stroke-miterlimit: 10;
+                  stroke-width: 1.92px;
+                }
+              </style>
+            </defs>
+            <g id="roll_brush" data-name="roll brush">
+              <circle class="cls-1" cx="12" cy="14.92" r="3.84"></circle>
+              <line class="cls-1" x1="14.72" y1="12.21" x2="9.29" y2="17.63"></line>
+              <rect class="cls-1" x="1.45" y="1.49" width="21.1" height="21.1"></rect>
+              <polygon
+                class="cls-1"
+                points="22.55 7.25 16.28 7.25 14.36 7.25 1.45 7.25 1.45 1.49 22.55 1.49 22.55 7.25"
+              ></polygon>
+              <line class="cls-1" x1="4.33" y1="4.37" x2="6.25" y2="4.37"></line>
+              <line class="cls-1" x1="8.17" y1="4.37" x2="10.08" y2="4.37"></line>
+              <line class="cls-1" x1="12" y1="4.37" x2="13.92" y2="4.37"></line>
+            </g>
+          </g>
+        </svg>
+        <span class="text-primary font-bold text-3xl">Acceso restringido</span>
+        <h3 class="text-surface-900 dark:text-surface-0 font-bold text-3xl lg:text-5xl mb-2">
+          No tiene permisos suficientes.
+        </h3>
+        <div class="text-surface-600 dark:text-surface-200 mb-8 max-w-md text-center">
+          Tu perfil no tiene los permisos necesarios para acceder a esta sección del sistema. Por
+          favor verifica con el administrador si necesitas habilitar funciones adicionales o cambiar
+          tu rol de acceso.
+        </div>
+
+        <div class="flex flex-col gap-3 w-full sm:w-80">
+          <p-button
+            label="Regresar"
+            size="large"
+            styleClass="!w-full mb-2"
+            (onClick)="onRedireccionar()"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

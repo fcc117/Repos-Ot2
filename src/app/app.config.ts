@@ -16,7 +16,7 @@ import Material from '@primeuix/themes/material';
 import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
-import { AuthInterceptor } from './core/services/auth.interceptor';
+import { AuthInterceptor } from '../app/core/services/login/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +32,13 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: {
         preset: Aura,
-        options: { darkModeSelector: '.app-dark' },
+        options: {
+          darkModeSelector: '.app-dark',
+          cssLayer: {
+            // name: 'primeng',
+            // order: 'theme, base, primeng',
+          },
+        },
       },
       ripple: true,
     }),

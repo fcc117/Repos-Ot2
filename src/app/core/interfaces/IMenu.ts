@@ -1,4 +1,4 @@
-export interface IMenuItem {
+export interface IMenu {
   pkMenu: number;
   fcDescripcion: string;
   fcRuta: string;
