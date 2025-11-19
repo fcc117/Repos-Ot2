@@ -39,6 +39,7 @@ export class Sesionexistente {
                     fnNumeroEmpleado: response.data.fnNumeroEmpleado, // Asumiendo que vienen en response.data
                     fcNombre: response.data.fcNombre,
                     fcPuesto: response.data.fcPuesto,
+                    menu: response.objectlist,
                   };
 
                   const segundos = this.convertMinToSeg(response.expireIn);
@@ -61,6 +62,8 @@ export class Sesionexistente {
                 }
               },
             });
+          } else {
+            this.showError(response.error);
           }
         },
       });
@@ -69,7 +72,7 @@ export class Sesionexistente {
   showError(mensaje: string) {
     this.messageService.add({
       severity: 'error',
-      summary: 'Error de inicio de sesión',
+      summary: 'Error',
       detail: mensaje,
       life: 4000,
     });

@@ -97,6 +97,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DrawerModule } from 'primeng/drawer';
 import { KeyFilterModule } from 'primeng/keyfilter';
+import { FluidModule } from 'primeng/fluid';
 
 @NgModule({
   imports: [
@@ -300,6 +301,7 @@ import { KeyFilterModule } from 'primeng/keyfilter';
     InputIconModule,
     AutoFocusModule,
     OverlayBadgeModule,
+    FluidModule,
   ],
   providers: [],
 })

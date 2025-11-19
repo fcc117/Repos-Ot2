@@ -1,1 +1,183 @@
-<p>ticketnuevo works!</p>
+<div class="card">
+  <div class="font-semibold text-2xl text-primary mb-5">Captura de solicitud</div>
+  <div class="flex flex-col gap-6 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedArea"
+            inputId="selAreaServicio"
+            [options]="arrAreaServicio"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selAreaServicio">Área de servicio</label>
+        </p-floatlabel>
+      </div>
+
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedSolicitud"
+            inputId="selTipoSolicitud"
+            [options]="arrTipoSolicitud"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selTipoSolicitud">Tipo de solicitud</label>
+        </p-floatlabel>
+      </div>
+
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedUdn"
+            inputId="selUnidadNegocio"
+            [options]="arrUnidadNegocio"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selUnidadNegocio">Unidad de negocio</label>
+        </p-floatlabel>
+      </div>
+
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedIncidente"
+            inputId="selIncidente"
+            [options]="arrIncidente"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selIncidente">Incidente o requerimiento</label>
+        </p-floatlabel>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedEquipo"
+            inputId="selEquipo"
+            [options]="arrEquipo"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selEquipo">Equipo afectado</label>
+        </p-floatlabel>
+      </div>
+    </div>
+    <div class="text-md">Referente a:</div>
+    <div class="flex flex-row gap-6">
+      <div class="flex items-center">
+        <p-radiobutton id="option1" name="option" value="Chicago" [(ngModel)]="radioValue" />
+        <label for="option1" class="leading-none ml-2">Chicago</label>
+      </div>
+      <div class="flex items-center">
+        <p-radiobutton id="option2" name="option" value="Los Angeles" [(ngModel)]="radioValue" />
+        <label for="option2" class="leading-none ml-2">Los Angeles</label>
+      </div>
+      <div class="flex items-center">
+        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
+        <label for="option3" class="leading-none ml-2">New York</label>
+      </div>
+      <div class="flex items-center">
+        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
+        <label for="option3" class="leading-none ml-2">New York</label>
+      </div>
+      <div class="flex items-center">
+        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
+        <label for="option3" class="leading-none ml-2">New York</label>
+      </div>
+      <div class="flex items-center">
+        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
+        <label for="option3" class="leading-none ml-2">New York</label>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col gap-1 w-full">
+    <div class="font-semibold text-2xl text-primary mt-5 mb-5">Cobro por SPPI</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedIncidente"
+            inputId="selIncidente"
+            [options]="arrIncidente"
+            optionLabel="name"
+            class="w-full"
+            [showClear]="true"
+          />
+          <label for="selIncidente">CeCo. de Facturación</label>
+        </p-floatlabel>
+      </div>
+    </div>
+    <small class="p-d-block text-gray-500">
+      Nota: El cobro se hará por el número de horas que se dediquen a la atención de tu orden de
+      trabajo
+    </small>
+  </div>
+  <div class="flex flex-col gap-6 w-full">
+    <div class="font-semibold text-2xl text-primary mt-5">Descripción de la solicitud</div>
+    <div class="w-full">
+      <p-editor [(ngModel)]="text" [style]="{ height: '320px' }" />
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="flex flex-col gap-1 w-full">
+    <div class="font-semibold text-2xl text-primary">Adjuntar archivos</div>
+    <small class="p-d-block text-gray-500 w-full">
+      ¿Quieres agregar algún archivo con el detalle de tu solicitud? Agregalos aqui.
+    </small>
+    <p-toast />
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-full lg:col-span-6">
+        <p-fileupload
+          chooseLabel="Adjuntar"
+          uploadLabel="Subir"
+          cancelLabel="Cancelar"
+          name="demo[]"
+          (onUpload)="onUpload($event)"
+          [multiple]="true"
+          accept="image/*"
+          maxFileSize="1000000"
+          mode="advanced"
+          url="https://www.primefaces.org/cdn/api/upload.php"
+        >
+          <ng-template #empty>
+            <div>Arrastra y suelta archivos aquí para subir.</div>
+          </ng-template>
+        </p-fileupload>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="flex flex-col gap-1 w-full">
+    <div class="font-semibold text-2xl text-primary">Auditores solicitantes</div>
+    <div class="flex items-center flex-col sm:flex-row">
+      <p-chip
+        label="10038179 - Fidel Cayetano Calixto"
+        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        styleClass="m-1"
+      ></p-chip>
+      <p-chip
+        label="10038179 - Fidel Cayetano Calixto"
+        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        styleClass="m-1"
+      ></p-chip>
+      <p-chip
+        label="10038179 - Fidel Cayetano Calixto"
+        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        styleClass="m-1"
+      ></p-chip>
+    </div>
+  </div>
+</div>

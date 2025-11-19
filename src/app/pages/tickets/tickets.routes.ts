@@ -13,4 +13,8 @@ export const TICKETS_ROUTES: Route[] = [
     path: 'abiertos',
     loadComponent: () => import('./ticketactivos/ticketactivos').then((m) => m.Ticketactivos),
   },
+  {
+    path: 'atencion',
+    loadComponent: () => import('./ticketatencion/ticketatencion').then((m) => m.Ticketatencion),
+  },
 ];

@@ -3,7 +3,8 @@ import { Layout } from './layout/components/layout/layout';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { AuthGuard } from './core/services/login/auth-guard';
 import { TICKETS_ROUTES } from './pages/tickets/tickets.routes';
-
+import { ADMIN_ROUTES } from './pages/administracion/administracion.routes';
+import { LayoutService } from './layout/service/layout.service';
 export const routes: Routes = [
   {
     path: '',
@@ -45,5 +46,11 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [AuthGuard],
     children: TICKETS_ROUTES,
+  },
+  {
+    path: 'administracion',
+    component: Layout,
+    canActivate: [AuthGuard],
+    children: ADMIN_ROUTES,
   },
 ];
