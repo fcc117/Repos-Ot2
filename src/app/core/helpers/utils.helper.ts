@@ -9,7 +9,7 @@ export function obtenerNumeroEmpleado(): string {
     const result = JSON.parse(userData);
     return result?.fnNumeroEmpleado.toString() || null;
   } catch {
-    console.warn('[obtenerNumeroEmpleado] Error al parsear user_data');
+    console.warn('Error al obtener: obtenerNumeroEmpleado');
     return '';
   }
 }
@@ -38,4 +38,17 @@ export function construirMenu(flatMenu: IMenu[]): MenuItem[] {
   }
 
   return tree;
+}
+
+export function obtenerUsrLogueado(): any {
+  const userData = localStorage.getItem('user_data');
+  if (!userData) return '';
+
+  try {
+    const result = JSON.parse(userData);
+    return result || null;
+  } catch {
+    console.warn('Error al parsear user_data');
+    return '';
+  }
 }

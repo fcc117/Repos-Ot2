@@ -5,12 +5,15 @@
       <div class="w-full">
         <p-floatlabel class="w-full">
           <p-select
-            [(ngModel)]="selectedArea"
+            [(ngModel)]="selectedAreaServicioValue"
             inputId="selAreaServicio"
-            [options]="arrAreaServicio"
+            [options]="opcionesAreaServicio()"
             optionLabel="name"
             class="w-full"
             [showClear]="true"
+            (onChange)="onAreaServicioChange()"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
           />
           <label for="selAreaServicio">Área de servicio</label>
         </p-floatlabel>
@@ -19,12 +22,16 @@
       <div class="w-full">
         <p-floatlabel class="w-full">
           <p-select
-            [(ngModel)]="selectedSolicitud"
+            [(ngModel)]="selectedSolicitudValue"
             inputId="selTipoSolicitud"
-            [options]="arrTipoSolicitud"
+            [options]="opcionesTipoSolicitud()"
             optionLabel="name"
             class="w-full"
             [showClear]="true"
+            [disabled]="isTipoSolicitudDisabled()"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            (onChange)="onTipoSolicitudChange()"
           />
           <label for="selTipoSolicitud">Tipo de solicitud</label>
         </p-floatlabel>
@@ -33,12 +40,16 @@
       <div class="w-full">
         <p-floatlabel class="w-full">
           <p-select
-            [(ngModel)]="selectedUdn"
+            [(ngModel)]="selectedUnidadNegocioValue"
             inputId="selUnidadNegocio"
-            [options]="arrUnidadNegocio"
+            [options]="opcionesUnidadNegocio()"
             optionLabel="name"
             class="w-full"
             [showClear]="true"
+            [disabled]="isUnidadNegocioDisabled()"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            (onChange)="onUnidadNegocioChange()"
           />
           <label for="selUnidadNegocio">Unidad de negocio</label>
         </p-floatlabel>
@@ -47,89 +58,89 @@
       <div class="w-full">
         <p-floatlabel class="w-full">
           <p-select
-            [(ngModel)]="selectedIncidente"
+            [(ngModel)]="selectedRequerimientoValue"
             inputId="selIncidente"
-            [options]="arrIncidente"
+            [options]="opcionesRequerimiento()"
             optionLabel="name"
             class="w-full"
             [showClear]="true"
+            [disabled]="isRequerimientoDisabled()"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            (onChange)="onRequerimientoChange()"
           />
           <label for="selIncidente">Incidente o requerimiento</label>
         </p-floatlabel>
       </div>
     </div>
+    @if (isEquipoVisible()) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       <div class="w-full">
         <p-floatlabel class="w-full">
           <p-select
-            [(ngModel)]="selectedEquipo"
+            [(ngModel)]="selectedEquipoValue"
             inputId="selEquipo"
-            [options]="arrEquipo"
+            [options]="opcionesEquipo()"
             optionLabel="name"
             class="w-full"
             [showClear]="true"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
           />
           <label for="selEquipo">Equipo afectado</label>
         </p-floatlabel>
       </div>
     </div>
+    } @if(isReferenteVisible()){
     <div class="text-md">Referente a:</div>
-    <div class="flex flex-row gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+      @for(item of opcionesReferente(); track item.code){
       <div class="flex items-center">
-        <p-radiobutton id="option1" name="option" value="Chicago" [(ngModel)]="radioValue" />
-        <label for="option1" class="leading-none ml-2">Chicago</label>
+        <p-radiobutton
+          [id]="'rb-' + item.code"
+          name="referenteGroup"
+          [value]="item.code"
+          [(ngModel)]="selectedReferenteValue"
+        />
+        <label [for]="'rb-' + item.code" class="leading-none ml-2">{{ item.name }}</label>
       </div>
-      <div class="flex items-center">
-        <p-radiobutton id="option2" name="option" value="Los Angeles" [(ngModel)]="radioValue" />
-        <label for="option2" class="leading-none ml-2">Los Angeles</label>
-      </div>
-      <div class="flex items-center">
-        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
-        <label for="option3" class="leading-none ml-2">New York</label>
-      </div>
-      <div class="flex items-center">
-        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
-        <label for="option3" class="leading-none ml-2">New York</label>
-      </div>
-      <div class="flex items-center">
-        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
-        <label for="option3" class="leading-none ml-2">New York</label>
-      </div>
-      <div class="flex items-center">
-        <p-radiobutton id="option3" name="option" value="New York" [(ngModel)]="radioValue" />
-        <label for="option3" class="leading-none ml-2">New York</label>
-      </div>
+      }
     </div>
-  </div>
-  <div class="flex flex-col gap-1 w-full">
-    <div class="font-semibold text-2xl text-primary mt-5 mb-5">Cobro por SPPI</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+    } @if(isCuerpoVisible()){
+    <div class="flex flex-col gap-1 w-full">
+      <div class="font-semibold text-2xl text-primary mt-5 mb-5">Cobro por SPPI</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        <div class="w-full md:col-span-2 lg:col-span-2">
+          <p-floatlabel class="w-full">
+            <p-select
+              [(ngModel)]="selectedCecoValue"
+              inputId="selCeco"
+              [options]="opcionesCeco()"
+              optionLabel="name"
+              class="w-full"
+              [showClear]="true"
+              emptyFilterMessage="Sin resultados"
+              emptyMessage="Sin resultados"
+            />
+            <label for="selIncidente">CeCo. de Facturación</label>
+          </p-floatlabel>
+        </div>
+      </div>
+      <small class="p-d-block text-gray-500">
+        Nota: El cobro se hará por el número de horas que se dediquen a la atención de tu orden de
+        trabajo
+      </small>
+    </div>
+    <div class="flex flex-col gap-6 w-full">
+      <div class="font-semibold text-2xl text-primary mt-5">Descripción de la solicitud</div>
       <div class="w-full">
-        <p-floatlabel class="w-full">
-          <p-select
-            [(ngModel)]="selectedIncidente"
-            inputId="selIncidente"
-            [options]="arrIncidente"
-            optionLabel="name"
-            class="w-full"
-            [showClear]="true"
-          />
-          <label for="selIncidente">CeCo. de Facturación</label>
-        </p-floatlabel>
+        <p-editor [(ngModel)]="plantilla" [style]="{ height: '320px' }" />
       </div>
     </div>
-    <small class="p-d-block text-gray-500">
-      Nota: El cobro se hará por el número de horas que se dediquen a la atención de tu orden de
-      trabajo
-    </small>
-  </div>
-  <div class="flex flex-col gap-6 w-full">
-    <div class="font-semibold text-2xl text-primary mt-5">Descripción de la solicitud</div>
-    <div class="w-full">
-      <p-editor [(ngModel)]="text" [style]="{ height: '320px' }" />
-    </div>
+    }
   </div>
 </div>
+@if(isCuerpoVisible()){
 <div class="card">
   <div class="flex flex-col gap-1 w-full">
     <div class="font-semibold text-2xl text-primary">Adjuntar archivos</div>
@@ -141,18 +152,43 @@
       <div class="col-span-full lg:col-span-6">
         <p-fileupload
           chooseLabel="Adjuntar"
-          uploadLabel="Subir"
           cancelLabel="Cancelar"
-          name="demo[]"
-          (onUpload)="onUpload($event)"
           [multiple]="true"
-          accept="image/*"
+          accept=""
           maxFileSize="1000000"
           mode="advanced"
-          url="https://www.primefaces.org/cdn/api/upload.php"
+          [showUploadButton]="false"
         >
-          <ng-template #empty>
-            <div>Arrastra y suelta archivos aquí para subir.</div>
+          <ng-template
+            #content
+            let-files
+            let-uploadedFiles="uploadedFiles"
+            let-removeFileCallback="removeFileCallback"
+            let-removeUploadedFileCallback="removeUploadedFileCallback"
+          >
+            <div class="flex flex-col gap-8 pt-4">
+              <div *ngIf="files?.length > 0">
+                <div class="flex flex-wrap gap-4">
+                  <div
+                    *ngFor="let file of files; let index = index"
+                    class="p-2 rounded-border flex flex-row justify-between items-center border border-surface gap-4 w-full"
+                  >
+                    <span
+                      class="text-sm font-semibold text-ellipsis whitespace-nowrap overflow-hidden"
+                      >{{ file.name }} {{ formatSize(file.size) }}</span
+                    >
+
+                    <p-button
+                      icon="pi pi-times"
+                      (click)="onRemoveTemplatingFile($event, file, removeFileCallback, index)"
+                      [outlined]="true"
+                      [rounded]="true"
+                      severity="danger"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </ng-template>
         </p-fileupload>
       </div>
@@ -162,22 +198,77 @@
 <div class="card">
   <div class="flex flex-col gap-1 w-full">
     <div class="font-semibold text-2xl text-primary">Auditores solicitantes</div>
-    <div class="flex items-center flex-col sm:flex-row">
-      <p-chip
-        label="10038179 - Fidel Cayetano Calixto"
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-        styleClass="m-1"
-      ></p-chip>
-      <p-chip
-        label="10038179 - Fidel Cayetano Calixto"
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-        styleClass="m-1"
-      ></p-chip>
-      <p-chip
-        label="10038179 - Fidel Cayetano Calixto"
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-        styleClass="m-1"
-      ></p-chip>
+    <div class="flex justify-end w-full">
+      <p-button
+        (click)="mostrarDialogoUsuarios()"
+        icon="pi pi-plus"
+        label="Agregar auditor"
+        styleClass="text-primarymin-w-40"
+      />
+    </div>
+
+    <div class="flex items-center flex-col sm:flex-row mt-5">
+      <div class="grid grid-cols-1 md:grid-cols-3">
+        <p-chip
+          *ngFor="let auditor of selectedAuditorValue()"
+          [label]="auditor.code + ' - ' + auditor.name"
+          image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+          styleClass="m-1"
+          [removable]="true"
+          (onRemove)="eliminarAuditor(auditor)"
+        ></p-chip>
+      </div>
     </div>
   </div>
 </div>
+<div class="flex justify-end w-full">
+  <p-button (click)="(null)" icon="pi pi-send" label="Enviar" styleClass="text-primarymin-w-40" />
+</div>
+}
+
+<!-----------------------------------------dialogos------------------------------------->
+
+<p-dialog
+  header="Agregar auditores solicitantes"
+  [(visible)]="visible"
+  [style]="{ width: '35rem' }"
+  [modal]="true"
+  (onHide)="limpiarModal()"
+>
+  <div class="flex justify-center gap-4 mb-10 mt-4">
+    <p-floatlabel class="w-full" variant="on">
+      <p-autoComplete
+        id="autoAuditor"
+        [(ngModel)]="selectedAuditorValueTemp"
+        [suggestions]="opcionesAuditoresFiltradas()"
+        (completeMethod)="buscarAuditor($event)"
+        [style]="{ width: '100%' }"
+        inputStyleClass="w-full"
+        optionLabel="name"
+        emptyFilterMessage="Sin resultados"
+        emptyMessage="Sin resultados"
+        [multiple]="true"
+        [delay]="100"
+        appendTo="body"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="p-d-flex p-ai-center">
+            <span class="p-mr-2">{{ item.code }}</span> -
+            <span>{{ item.name }}</span>
+          </div>
+        </ng-template>
+
+        <ng-template let-item pTemplate="selectedItem">
+          {{ item.code }} - {{ item.name }}
+        </ng-template>
+      </p-autoComplete>
+
+      <label for="autoAuditor">Auditor solicitante</label>
+    </p-floatlabel>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button label="Cancelar" severity="secondary" (click)="visible = false" />
+    <p-button label="Guardar" (click)="visible = false" />
+  </div>
+</p-dialog>

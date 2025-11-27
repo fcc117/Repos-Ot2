@@ -4,7 +4,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { AuthGuard } from './core/services/login/auth-guard';
 import { TICKETS_ROUTES } from './pages/tickets/tickets.routes';
 import { ADMIN_ROUTES } from './pages/administracion/administracion.routes';
-import { LayoutService } from './layout/service/layout.service';
+
 export const routes: Routes = [
   {
     path: '',
