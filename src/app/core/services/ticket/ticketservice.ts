@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { IResponseData } from '../../interfaces/IResponseData';
 import { _config } from '../../../../config';
 import { HttpClient } from '@angular/common/http';
+import { ITicketRequest } from '../../../pages/tickets/interfaces/IEntTicket';
 
 @Injectable({
   providedIn: 'root',
@@ -73,6 +74,12 @@ export class Ticketservice {
   obtenerAuditores(busqueda: string): Observable<IResponseData> {
     return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Catalogo/ObtenerAuditores`, {
       busqueda,
+    });
+  }
+
+  insertarTicket(model: ITicketRequest): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/InsertarTicket`, {
+      model,
     });
   }
 }

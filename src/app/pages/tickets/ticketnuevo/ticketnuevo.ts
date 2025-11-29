@@ -7,7 +7,13 @@ import { ICatalogoItem, ICatalogoItemStr } from '../interfaces/ICatalogoItem';
 import { _config } from '../../../../config';
 import { ICatalogoAuditor } from '../interfaces/ICatalogoAuditor';
 import { PrimeNG } from 'primeng/config';
-import { obtenerUsrLogueado } from '../../../core/helpers/utils.helper';
+import {
+  convertFileToByteArray,
+  formatoTamanio,
+  obtenerUsrLogueado,
+  validarCamposRequeridos,
+} from '../../../core/helpers/utils.helper';
+import { IEntArchivo, ITicketRequest } from '../interfaces/IEntTicket';
 @Component({
   selector: 'app-ticketnuevo',
   imports: [PrimeImportsModule],
@@ -45,6 +51,8 @@ export class Ticketnuevo {
   selectedAuditorValue = signal<ICatalogoItemStr[]>([]);
   selectedAuditorValueTemp = signal<ICatalogoItemStr[]>([]);
   opcionesAuditoresFiltradas = signal<ICatalogoItemStr[]>([]);
+
+  listaDocumentos = signal<IEntArchivo[]>([]);
 
   readonly opcionesAreaServicio = computed(() =>
     this.arrAreaServicio().map((item) => ({
@@ -341,52 +349,42 @@ export class Ticketnuevo {
   }
 
   //subir archivos
-  uploadedFiles: any[] = [];
 
-  formatSize(bytes: any) {
-    const k = 1024;
-    const dm = 3;
-    const sizes = this.config.translation.fileSizeTypes ?? [''];
-    if (bytes === 0) {
-      return `0 ${sizes[0]}`;
-    }
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
-
-    return `${formattedSize} ${sizes[i]}`;
+  formato(bytes: number): string {
+    return formatoTamanio(bytes, this.config);
   }
 
-  files = [];
-  totalSize: number = 0;
-  totalSizePercent: number = 0;
+  onRemoverArchivo(event: any, file: any, removeFileCallback: Function, index: number): void {
+    removeFileCallback(event, index);
 
-  onRemoveTemplatingFile(event: any, file: any, removeFileCallback: Function, index: number) {
-    {
-      removeFileCallback(event, index);
-      this.totalSize -= parseInt(this.formatSize(file.size));
-      this.totalSizePercent = this.totalSize / 10;
-    }
+    this.listaDocumentos.update((current) =>
+      current.filter((doc) => doc.nombre !== file.name || doc.tamaño !== file.size)
+    );
   }
 
-  onUpload(event: any) {
-    for (const file of event.files) {
-      this.uploadedFiles.push(file);
-    }
+  onAdjuntarArchivo(event: any): void {
+    const files: File[] = event.files;
 
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
-  }
+    this.listaDocumentos.set([]);
 
-  onBasicUpload() {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Success',
-      detail: 'File Uploaded with Basic Mode',
+    files.forEach((file) => {
+      convertFileToByteArray(file).then((bytes) => {
+        this.listaDocumentos.update((current) => [
+          ...current,
+          {
+            folio: 0,
+            nombre: file.name,
+            archivo: bytes,
+            tamaño: file.size,
+            extension: file.name.split('.').pop() ?? '',
+            usuario_llave_maestra: obtenerUsrLogueado().fnNumeroEmpleado?.toString() ?? '',
+          },
+        ]);
+      });
     });
   }
 
   //agregar auditores
-
   visible: boolean = false;
 
   mostrarDialogoUsuarios() {
@@ -459,5 +457,96 @@ export class Ticketnuevo {
 
   private limpiarAuditor(items: ICatalogoItemStr[]): ICatalogoItemStr[] {
     return items.filter((item) => item.code === obtenerUsrLogueado().fnNumeroEmpleado?.toString());
+  }
+
+  onInsertarTicket() {
+    // const errores = this.validarTicket();
+
+    // if (errores.length > 0) {
+    //   console.warn('Errores de validación:', errores);
+    //   // Aquí podrías mostrar un toast o un modal con los errores
+    //   return;
+    // }
+
+    const obj: ITicketRequest = {
+      model: {
+        folio: 0,
+        id_area: this.selectedAreaServicioValue()?.code ?? 0,
+        id_tipo_requerimiento: this.selectedRequerimientoValue()?.code ?? 0,
+        id_unidad_negocio: this.selectedUnidadNegocioValue()?.code ?? 0,
+        folio_honestel: 0,
+        descripcion: this.plantilla() ?? '',
+        usuario_llave_maestra_creacion: obtenerUsrLogueado().fnNumeroEmpleado?.toString() ?? '',
+        centro_de_costos_cobro: this.selectedCecoValue()?.code.toString() ?? '0',
+        folio_comercio: 0,
+        tipo_PSolicitud: '',
+        tipo_incidente: this.selectedRequerimientoValue()?.code.toString() ?? '0',
+        id_referente_a: this.selectedReferenteValue()?.code ?? 0,
+        listaConsultores: this.selectedAuditorValue()
+          .map((item) => item.code)
+          .join(','),
+        listaDocumentos: this.listaDocumentos(),
+      },
+    };
+
+    const errores = validarCamposRequeridos(obj.model, [
+      'id_area',
+      'id_tipo_requerimiento',
+      'id_unidad_negocio',
+      'descripcion',
+      'centro_de_costos_cobro',
+      'id_referente_a',
+      'listaConsultores',
+      'listaDocumentos',
+    ]);
+
+    if (errores.length > 0) {
+      console.warn('Errores de validación:', errores);
+      return;
+    }
+
+    this.ticketService.insertarTicket(obj).subscribe({
+      next: (response) => {
+        if (response.exito) {
+        }
+      },
+      error: (err) => {
+        console.error('Error al obtener generar el ticket:', err);
+      },
+    });
+  }
+
+  private validarTicket(): string[] {
+    const errores: string[] = [];
+
+    if (!this.selectedAreaServicioValue()?.code) {
+      errores.push('Debes seleccionar un área de servicio');
+    }
+
+    if (!this.selectedRequerimientoValue()?.code) {
+      errores.push('Debes seleccionar un tipo de requerimiento');
+    }
+
+    if (!this.selectedUnidadNegocioValue()?.code) {
+      errores.push('Debes seleccionar una unidad de negocio');
+    }
+
+    if (!this.plantilla() || this.plantilla()?.trim() === '') {
+      errores.push('La descripción es obligatoria');
+    }
+
+    if (!this.selectedCecoValue()?.code) {
+      errores.push('Debes seleccionar un centro de costos');
+    }
+
+    if (this.listaDocumentos().length === 0) {
+      errores.push('Debes adjuntar al menos un documento');
+    }
+
+    if (this.selectedAuditorValue().length === 0) {
+      errores.push('Debes seleccionar al menos un auditor');
+    }
+
+    return errores;
   }
 }

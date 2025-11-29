@@ -158,7 +158,10 @@
           maxFileSize="1000000"
           mode="advanced"
           [showUploadButton]="false"
+          ,
+          (onSelect)="onAdjuntarArchivo($event)"
         >
+          >
           <ng-template
             #content
             let-files
@@ -175,12 +178,12 @@
                   >
                     <span
                       class="text-sm font-semibold text-ellipsis whitespace-nowrap overflow-hidden"
-                      >{{ file.name }} {{ formatSize(file.size) }}</span
+                      >{{ file.name }} {{ formato(file.size) }}</span
                     >
 
                     <p-button
                       icon="pi pi-times"
-                      (click)="onRemoveTemplatingFile($event, file, removeFileCallback, index)"
+                      (click)="onRemoverArchivo($event, file, removeFileCallback, index)"
                       [outlined]="true"
                       [rounded]="true"
                       severity="danger"
@@ -222,7 +225,12 @@
   </div>
 </div>
 <div class="flex justify-end w-full">
-  <p-button (click)="(null)" icon="pi pi-send" label="Enviar" styleClass="text-primarymin-w-40" />
+  <p-button
+    (onClick)="onInsertarTicket()"
+    icon="pi pi-send"
+    label="Enviar"
+    styleClass="text-primarymin-w-40"
+  />
 </div>
 }
 
