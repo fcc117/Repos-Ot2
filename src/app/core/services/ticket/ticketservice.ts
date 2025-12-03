@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseData } from '../../interfaces/IResponseData';
 import { _config } from '../../../../config';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ITicketRequest } from '../../../pages/tickets/interfaces/IEntTicket';
 
 @Injectable({
@@ -78,8 +78,6 @@ export class Ticketservice {
   }
 
   insertarTicket(model: ITicketRequest): Observable<IResponseData> {
-    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/InsertarTicket`, {
-      model,
-    });
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/InsertarTicket`, model);
   }
 }

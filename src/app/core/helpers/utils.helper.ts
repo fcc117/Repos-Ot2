@@ -1,6 +1,8 @@
 import { MenuItem } from 'primeng/api';
 import { IMenu } from '../interfaces/IMenu';
 import { PrimeNG } from 'primeng/config';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 export function obtenerNumeroEmpleado(): string {
   const userData = localStorage.getItem('user_data');
@@ -72,16 +74,41 @@ export function formatoTamanio(bytes: any, config: PrimeNG) {
   return `${formattedSize} ${sizes[i]}`;
 }
 
-export function validarCamposRequeridos<T extends object>(obj: T, campos: (keyof T)[]): string[] {
+export function convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+export function validarCamposRequeridos<T extends object>(
+  obj: T,
+  campos: { key: keyof T; nombre: string }[]
+): string[] {
   const errores: string[] = [];
 
-  campos.forEach((campo) => {
-    const valor = obj[campo];
-
+  campos.forEach(({ key, nombre }) => {
+    const valor = obj[key];
     if (valor === null || valor === undefined || valor === '') {
-      errores.push(`El campo "${String(campo)}" es obligatorio`);
+      errores.push(`El campo "${nombre}" es obligatorio`);
     }
   });
 
   return errores;
+}
+
+@Injectable({ providedIn: 'root' })
+export class NavigationHelperService {
+  constructor(private router: Router) {}
+
+  resetRuta(ruta: string): void {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([ruta]);
+    });
+  }
 }

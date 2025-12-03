@@ -1,6 +1,6 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { PrimeImportsModule } from '../../../primeng-imports';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ICatalogo } from '../interfaces/ICatalogo';
 import { Ticketservice } from '../../../core/services/ticket/ticketservice';
 import { ICatalogoItem, ICatalogoItemStr } from '../interfaces/ICatalogoItem';
@@ -8,24 +8,28 @@ import { _config } from '../../../../config';
 import { ICatalogoAuditor } from '../interfaces/ICatalogoAuditor';
 import { PrimeNG } from 'primeng/config';
 import {
-  convertFileToByteArray,
+  convertFileToBase64,
   formatoTamanio,
+  NavigationHelperService,
   obtenerUsrLogueado,
   validarCamposRequeridos,
 } from '../../../core/helpers/utils.helper';
 import { IEntArchivo, ITicketRequest } from '../interfaces/IEntTicket';
+import { FileSelectEvent } from 'primeng/fileupload';
 @Component({
   selector: 'app-ticketnuevo',
   imports: [PrimeImportsModule],
   templateUrl: './ticketnuevo.html',
   styleUrl: './ticketnuevo.css',
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
 })
 export class Ticketnuevo {
   constructor(
     private messageService: MessageService,
     private ticketService: Ticketservice,
-    private config: PrimeNG
+    private config: PrimeNG,
+    private confirmationService: ConfirmationService,
+    private navHelper: NavigationHelperService
   ) {
     this.catalogoAreaServicio();
     this.catalogoCeco();
@@ -264,6 +268,9 @@ export class Ticketnuevo {
     const idArea = areaSeleccionada.code;
     this.catalogoTipoSolicitud(idArea);
 
+    //limpiar adjuntos
+    this.listaDocumentos.set([]);
+
     //limpiar auditores seleccionados
     this.selectedAuditorValue.set(this.limpiarAuditor(this.selectedAuditorValue()));
     this.selectedAuditorValueTemp.set(this.limpiarAuditor(this.selectedAuditorValueTemp()));
@@ -333,6 +340,9 @@ export class Ticketnuevo {
     const idUnidadNegocio = UnidadNegocioSeleccionada.code;
     this.catalogoReferente(idArea, idSolicitud, idUnidadNegocio, estatus);
 
+    //limpiar adjuntos
+    this.listaDocumentos.set([]);
+
     //limpiar auditores seleccionados
     this.selectedAuditorValue.set(this.limpiarAuditor(this.selectedAuditorValue()));
     this.selectedAuditorValueTemp.set(this.limpiarAuditor(this.selectedAuditorValueTemp()));
@@ -362,19 +372,17 @@ export class Ticketnuevo {
     );
   }
 
-  onAdjuntarArchivo(event: any): void {
-    const files: File[] = event.files;
+  onAdjuntarArchivo(event: FileSelectEvent): void {
+    const archivos = event.currentFiles ?? [];
 
-    this.listaDocumentos.set([]);
-
-    files.forEach((file) => {
-      convertFileToByteArray(file).then((bytes) => {
+    archivos.forEach((file) => {
+      convertFileToBase64(file).then((base64) => {
         this.listaDocumentos.update((current) => [
           ...current,
           {
             folio: 0,
             nombre: file.name,
-            archivo: bytes,
+            archivo: base64,
             tamaño: file.size,
             extension: file.name.split('.').pop() ?? '',
             usuario_llave_maestra: obtenerUsrLogueado().fnNumeroEmpleado?.toString() ?? '',
@@ -382,6 +390,10 @@ export class Ticketnuevo {
         ]);
       });
     });
+  }
+
+  onCancelarAdjuntos(): void {
+    this.listaDocumentos.set([]);
   }
 
   //agregar auditores
@@ -459,15 +471,7 @@ export class Ticketnuevo {
     return items.filter((item) => item.code === obtenerUsrLogueado().fnNumeroEmpleado?.toString());
   }
 
-  onInsertarTicket() {
-    // const errores = this.validarTicket();
-
-    // if (errores.length > 0) {
-    //   console.warn('Errores de validación:', errores);
-    //   // Aquí podrías mostrar un toast o un modal con los errores
-    //   return;
-    // }
-
+  onInsertarTicket(): void {
     const obj: ITicketRequest = {
       model: {
         folio: 0,
@@ -477,10 +481,10 @@ export class Ticketnuevo {
         folio_honestel: 0,
         descripcion: this.plantilla() ?? '',
         usuario_llave_maestra_creacion: obtenerUsrLogueado().fnNumeroEmpleado?.toString() ?? '',
-        centro_de_costos_cobro: this.selectedCecoValue()?.code.toString() ?? '0',
+        centro_de_costos_cobro: this.selectedCecoValue()?.code.toString() ?? '',
         folio_comercio: 0,
-        tipo_PSolicitud: '',
-        tipo_incidente: this.selectedRequerimientoValue()?.code.toString() ?? '0',
+        tipo_PSolicitud: this.selectedRequerimientoValue()?.name.toString() ?? '',
+        tipo_incidente: this.selectedRequerimientoValue()?.code.toString() ?? '',
         id_referente_a: this.selectedReferenteValue()?.code ?? 0,
         listaConsultores: this.selectedAuditorValue()
           .map((item) => item.code)
@@ -490,63 +494,68 @@ export class Ticketnuevo {
     };
 
     const errores = validarCamposRequeridos(obj.model, [
-      'id_area',
-      'id_tipo_requerimiento',
-      'id_unidad_negocio',
-      'descripcion',
-      'centro_de_costos_cobro',
-      'id_referente_a',
-      'listaConsultores',
-      'listaDocumentos',
+      { key: 'id_area', nombre: 'Área de servicio' },
+      { key: 'id_tipo_requerimiento', nombre: 'Tipo de solicitud' },
+      { key: 'id_unidad_negocio', nombre: 'Unidad de negocio' },
+      { key: 'tipo_PSolicitud', nombre: 'Incidente o requerimiento' },
+      { key: 'centro_de_costos_cobro', nombre: 'Ceco de facturación' },
     ]);
 
     if (errores.length > 0) {
-      console.warn('Errores de validación:', errores);
+      const mensaje = errores.join('<br/>');
+
+      this.confirmationService.confirm({
+        header: 'Atención: campos obligatorios faltantes',
+        message: mensaje,
+        icon: 'pi pi-exclamation-triangle',
+        acceptVisible: false,
+        rejectVisible: true,
+        rejectLabel: 'Cerrar',
+      });
       return;
     }
 
     this.ticketService.insertarTicket(obj).subscribe({
       next: (response) => {
         if (response.exito) {
+          this.confirmationService.confirm({
+            header: 'Éxito:',
+            message: `Se ha creado la Orden de trabajo con el siguiente folio:
+                      <b class="text-primary" >${response.sValor}</b>`,
+            icon: 'pi pi-ticket',
+            acceptVisible: true,
+            rejectVisible: false,
+            acceptLabel: 'Aceptar',
+            accept: () => {
+              //limpiamos
+              this.resetFormulario();
+            },
+          });
+        } else {
+          this.confirmationService.confirm({
+            header: 'Error:',
+            message: 'Ocurrió un error al intentar registrar la Orden de trabajo.',
+            icon: 'pi pi-times-circle',
+            acceptVisible: true,
+            rejectVisible: false,
+            acceptLabel: 'Aceptar',
+          });
         }
       },
       error: (err) => {
-        console.error('Error al obtener generar el ticket:', err);
+        this.confirmationService.confirm({
+          header: 'Error:',
+          message: 'Ocurrió un error, favor de contactar a su administrador.',
+          icon: 'pi pi-times-circle',
+          acceptVisible: true,
+          rejectVisible: false,
+          acceptLabel: 'Aceptar',
+        });
+        console.error('Error al generar el ticket:', err);
       },
     });
   }
-
-  private validarTicket(): string[] {
-    const errores: string[] = [];
-
-    if (!this.selectedAreaServicioValue()?.code) {
-      errores.push('Debes seleccionar un área de servicio');
-    }
-
-    if (!this.selectedRequerimientoValue()?.code) {
-      errores.push('Debes seleccionar un tipo de requerimiento');
-    }
-
-    if (!this.selectedUnidadNegocioValue()?.code) {
-      errores.push('Debes seleccionar una unidad de negocio');
-    }
-
-    if (!this.plantilla() || this.plantilla()?.trim() === '') {
-      errores.push('La descripción es obligatoria');
-    }
-
-    if (!this.selectedCecoValue()?.code) {
-      errores.push('Debes seleccionar un centro de costos');
-    }
-
-    if (this.listaDocumentos().length === 0) {
-      errores.push('Debes adjuntar al menos un documento');
-    }
-
-    if (this.selectedAuditorValue().length === 0) {
-      errores.push('Debes seleccionar al menos un auditor');
-    }
-
-    return errores;
+  resetFormulario(): void {
+    this.navHelper.resetRuta('tickets/nuevo');
   }
 }

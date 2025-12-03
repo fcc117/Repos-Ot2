@@ -18,7 +18,7 @@ export interface IEntTicket {
 export interface IEntArchivo {
   folio: number;
   nombre: string;
-  archivo: Uint8Array; // o string si lo mandas en base64
+  archivo: string;
   tamaño: number;
   extension: string;
   usuario_llave_maestra: string;

@@ -14,6 +14,7 @@
             (onChange)="onAreaServicioChange()"
             emptyFilterMessage="Sin resultados"
             emptyMessage="Sin resultados"
+            required="true"
           />
           <label for="selAreaServicio">Área de servicio</label>
         </p-floatlabel>
@@ -32,6 +33,7 @@
             emptyFilterMessage="Sin resultados"
             emptyMessage="Sin resultados"
             (onChange)="onTipoSolicitudChange()"
+            required="true"
           />
           <label for="selTipoSolicitud">Tipo de solicitud</label>
         </p-floatlabel>
@@ -50,6 +52,7 @@
             emptyFilterMessage="Sin resultados"
             emptyMessage="Sin resultados"
             (onChange)="onUnidadNegocioChange()"
+            required="true"
           />
           <label for="selUnidadNegocio">Unidad de negocio</label>
         </p-floatlabel>
@@ -68,6 +71,7 @@
             emptyFilterMessage="Sin resultados"
             emptyMessage="Sin resultados"
             (onChange)="onRequerimientoChange()"
+            required="true"
           />
           <label for="selIncidente">Incidente o requerimiento</label>
         </p-floatlabel>
@@ -99,7 +103,7 @@
         <p-radiobutton
           [id]="'rb-' + item.code"
           name="referenteGroup"
-          [value]="item.code"
+          [value]="item"
           [(ngModel)]="selectedReferenteValue"
         />
         <label [for]="'rb-' + item.code" class="leading-none ml-2">{{ item.name }}</label>
@@ -121,6 +125,7 @@
               [showClear]="true"
               emptyFilterMessage="Sin resultados"
               emptyMessage="Sin resultados"
+              required="true"
             />
             <label for="selIncidente">CeCo. de Facturación</label>
           </p-floatlabel>
@@ -158,8 +163,8 @@
           maxFileSize="1000000"
           mode="advanced"
           [showUploadButton]="false"
-          ,
           (onSelect)="onAdjuntarArchivo($event)"
+          (onClear)="onCancelarAdjuntos()"
         >
           >
           <ng-template
@@ -213,11 +218,11 @@
     <div class="flex items-center flex-col sm:flex-row mt-5">
       <div class="grid grid-cols-1 md:grid-cols-3">
         <p-chip
-          *ngFor="let auditor of selectedAuditorValue()"
+          *ngFor="let auditor of selectedAuditorValue(); let i = index"
           [label]="auditor.code + ' - ' + auditor.name"
           image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
           styleClass="m-1"
-          [removable]="true"
+          [removable]="i !== 0"
           (onRemove)="eliminarAuditor(auditor)"
         ></p-chip>
       </div>
@@ -280,3 +285,4 @@
     <p-button label="Guardar" (click)="visible = false" />
   </div>
 </p-dialog>
+<p-confirmDialog [position]="'top'"></p-confirmDialog>
