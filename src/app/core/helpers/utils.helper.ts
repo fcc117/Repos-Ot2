@@ -112,3 +112,126 @@ export class NavigationHelperService {
     });
   }
 }
+
+export function setSpanishLocale(primengConfig: PrimeNG) {
+  primengConfig.setTranslation({
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Do.', 'Lu.', 'Ma.', 'Mi.', 'Ju.', 'Vi.', 'Sá'],
+    monthNames: [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ],
+    monthNamesShort: [
+      'Ene',
+      'Feb',
+      'Mar',
+      'Abr',
+      'May',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dic',
+    ],
+    today: 'Hoy',
+    clear: 'Limpiar',
+  });
+}
+
+export function obtenerAntiguedad(fechaAlta: Date | string): string {
+  if (!fechaAlta) return '-';
+
+  const inicio = new Date(fechaAlta);
+  const hoy = new Date();
+
+  // Si es el mismo día → calcular horas
+  if (
+    inicio.getFullYear() === hoy.getFullYear() &&
+    inicio.getMonth() === hoy.getMonth() &&
+    inicio.getDate() === hoy.getDate()
+  ) {
+    const diffMs = hoy.getTime() - inicio.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    return diffHours === 1 ? `${diffHours} hora` : `${diffHours} horas`;
+  }
+
+  // Caso normal → calcular años, meses, días
+  let años = hoy.getFullYear() - inicio.getFullYear();
+  let meses = hoy.getMonth() - inicio.getMonth();
+  let dias = hoy.getDate() - inicio.getDate();
+
+  if (dias < 0) {
+    meses -= 1;
+    const ultimoMes = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
+    dias += ultimoMes.getDate();
+  }
+
+  if (meses < 0) {
+    años -= 1;
+    meses += 12;
+  }
+
+  const partes: string[] = [];
+  if (años > 0) partes.push(`${años} año${años > 1 ? 's' : ''}`);
+  if (meses > 0) partes.push(`${meses} mes${meses > 1 ? 'es' : ''}`);
+  if (dias > 0) partes.push(`${dias} día${dias > 1 ? 's' : ''}`);
+
+  return partes.length > 0 ? partes.join(' ') : '0 días';
+}
+
+export function obtenerAntiguedadAsignacion(
+  fechaInicio: Date | string | null,
+  fechaFin?: Date | string | null
+): string {
+  if (!fechaInicio) return '-';
+
+  const inicio = new Date(fechaInicio);
+  const fin = fechaFin ? new Date(fechaFin) : new Date();
+
+  // Si las fechas son iguales en día, mes y año → calcular horas
+  if (
+    inicio.getFullYear() === fin.getFullYear() &&
+    inicio.getMonth() === fin.getMonth() &&
+    inicio.getDate() === fin.getDate()
+  ) {
+    const diffMs = fin.getTime() - inicio.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    return diffHours === 1 ? `${diffHours} hora` : `${diffHours} horas`;
+  }
+
+  // Caso normal: calcular años, meses, días
+  let años = fin.getFullYear() - inicio.getFullYear();
+  let meses = fin.getMonth() - inicio.getMonth();
+  let dias = fin.getDate() - inicio.getDate();
+
+  if (dias < 0) {
+    meses -= 1;
+    const ultimoMes = new Date(fin.getFullYear(), fin.getMonth(), 0);
+    dias += ultimoMes.getDate();
+  }
+
+  if (meses < 0) {
+    años -= 1;
+    meses += 12;
+  }
+
+  const partes: string[] = [];
+  if (años > 0) partes.push(`${años} año${años > 1 ? 's' : ''}`);
+  if (meses > 0) partes.push(`${meses} mes${meses > 1 ? 'es' : ''}`);
+  if (dias > 0) partes.push(`${dias} día${dias > 1 ? 's' : ''}`);
+
+  return partes.length > 0 ? partes.join(' ') : '0 días';
+}

@@ -1,1 +1,192 @@
-<p>ticketconsulta works!</p>
+<div class="card">
+  <div class="font-semibold text-2xl text-primary mb-5">Filtros de búsqueda</div>
+  <div class="flex flex-col gap-6 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+      <div class="w-full">
+        <p-floatLabel class="w-full">
+          <p-inputNumber
+            id="txtFolio"
+            [(ngModel)]="SelectedFolioValue"
+            class="w-full"
+            mode="decimal"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="0"
+            [useGrouping]="false"
+          />
+          <label for="txtFolio">Folio</label>
+        </p-floatLabel>
+      </div>
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedVerTicketsValue"
+            [options]="opcionesVerTickets()"
+            inputId="selVerTicket"
+            optionLabel="name"
+            class="w-full"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+          />
+          <label for="selVerTicket">Ver tickets</label>
+        </p-floatlabel>
+      </div>
+      <div class="w-full">
+        <p-floatLabel class="w-full">
+          <input
+            pInputText
+            id="txtSolicitante"
+            type="text"
+            [(ngModel)]="SelectedSolicitanteValue"
+            class="w-full"
+          />
+          <label for="txtSolicitante">Auditor solicitante</label>
+        </p-floatLabel>
+      </div>
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedEstatusValue"
+            [options]="opcionesEstatus()"
+            inputId="selEstatus"
+            optionLabel="name"
+            class="w-full"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            [showClear]="true"
+          />
+          <label for="selEstatus">Estatus</label>
+        </p-floatlabel>
+      </div>
+      <div class="w-full">
+        <p-floatlabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedAreaValue"
+            [options]="opcionesArea()"
+            inputId="selArea"
+            optionLabel="name"
+            class="w-full"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            [showClear]="true"
+          />
+          <label for="selArea">Área</label>
+        </p-floatlabel>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+      <div class="col-span-1 w-full">
+        <p-floatLabel class="w-full">
+          <p-select
+            [(ngModel)]="selectedRangoAntiguedadValue"
+            [options]="opcionesRangoAntiguedad()"
+            inputId="selAntiguedad"
+            optionLabel="name"
+            class="w-full"
+            emptyFilterMessage="Sin resultados"
+            emptyMessage="Sin resultados"
+            [showClear]="true"
+          />
+          <label for="selAntiguedad">Antigüedad</label>
+        </p-floatLabel>
+      </div>
+      @if(selectedRangoAntiguedadValue()){
+      <div class="col-span-1 w-full">
+        <p-floatLabel class="w-full">
+          <p-inputNumber
+            id="txtAntiguedad"
+            [(ngModel)]="selectedAntiguedadValue"
+            class="w-full"
+            mode="decimal"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="0"
+            [useGrouping]="false"
+          />
+          <label for="txtAntiguedad">Días</label>
+        </p-floatLabel>
+      </div>
+      }
+      <div class="col-span-2">
+        <p-floatLabel class="w-full">
+          <p-datepicker
+            [(ngModel)]="selectedFechaRegistroValue"
+            [readonlyInput]="true"
+            showIcon
+            iconDisplay="input"
+            styleClass=" w-full"
+            inputId="fechaRegistro"
+            selectionMode="range"
+            inputStyleClass="w-full"
+            [showClear]="true"
+          />
+          <label for="fechaRegistro">Fecha de registro (Desde: Hasta:)</label>
+        </p-floatLabel>
+      </div>
+
+      <div class="col-span-2">
+        <p-floatLabel class="w-full">
+          <p-datepicker
+            [(ngModel)]="selectedFechaCierreValue"
+            [readonlyInput]="true"
+            showIcon
+            iconDisplay="input"
+            styleClass=" w-full"
+            inputId="fechaCierre"
+            selectionMode="range"
+            inputStyleClass="w-full"
+            [showClear]="true"
+          />
+          <label for="fechaCierre">Fecha de cierre (Desde: Hasta:)</label>
+        </p-floatLabel>
+      </div>
+    </div>
+    <div class="flex justify-end w-full">
+      <p-button
+        icon="pi pi-search"
+        label="Aplicar filtros"
+        styleClass="text-primarymin-w-40 m-2"
+        (onClick)="onConsultaTickets()"
+      />
+      <p-button
+        icon="pi pi-eraser"
+        label="Borrar filtros"
+        styleClass="text-primarymin-w-40 m-2"
+        (onClick)="limpiarCampos()"
+      />
+    </div>
+  </div>
+</div>
+
+@if(arrTickets().length > 0){
+<div class="card">
+  <div class="font-semibold text-2xl text-primary mb-5">Resultados de búsqueda</div>
+  <div class="font-semibold text-primary mb-5">{{ totalTickets() }} Tickets encontrados</div>
+  <p-table [value]="arrTickets()" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr>
+        <th>Folio</th>
+        <th>Estatus</th>
+        <th>Antigüedad</th>
+        <th>En asignación</th>
+        <th>Tipo de solicitud</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-ticket>
+      <tr>
+        <td>
+          <span class="text-shadow-black font-bold">{{ ticket.folio }}</span>
+        </td>
+        <td>
+          <i pTooltip="{{ ticket.estatus }}" [ngClass]="obtenerEstatusColor(ticket.id_estatus)"></i>
+        </td>
+        <td>{{ calcularAntiguedad(ticket.fecha_alta) }}</td>
+        <td>{{ calcularAntiguedadAsignacion(ticket.fecha_asignacion, ticket.fecha_cierre) }}</td>
+        <td [innerHTML]="generaTipoSolicitud(ticket)"></td>
+        <td><i pTooltip="Detalle" tooltipPosition="top" class="pi pi-receipt !text-2xl"></i></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+}
+<p-confirmDialog [position]="'top'"></p-confirmDialog>

@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { PrimeImportsModule } from '../../../primeng-imports';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ICatalogo } from '../interfaces/ICatalogo';
@@ -30,7 +30,8 @@ export class Ticketnuevo {
     private config: PrimeNG,
     private confirmationService: ConfirmationService,
     private navHelper: NavigationHelperService
-  ) {
+  ) {}
+  ngOnInit() {
     this.catalogoAreaServicio();
     this.catalogoCeco();
     this.agregarAuditorInicial();

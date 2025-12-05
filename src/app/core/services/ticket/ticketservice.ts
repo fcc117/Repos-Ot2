@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseData } from '../../interfaces/IResponseData';
 import { _config } from '../../../../config';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ITicketRequest } from '../../../pages/tickets/interfaces/IEntTicket';
+import { ITicketsRequest } from '../../../pages/tickets/interfaces/IEntTicketParam';
 
 @Injectable({
   providedIn: 'root',
@@ -79,5 +80,26 @@ export class Ticketservice {
 
   insertarTicket(model: ITicketRequest): Observable<IResponseData> {
     return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/InsertarTicket`, model);
+  }
+  //consulta tickets
+  obtenerVerTickets(fcNumeroEmpleado: string): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Catalogo/ObtenerVerTickets`, {
+      fcNumeroEmpleado,
+    });
+  }
+
+  ObtenerEstatus(): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Catalogo/obtenerEstatus`, {});
+  }
+
+  obtenerAntiguedad(): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(
+      `${_config.baseUrl}/Catalogo/obtenerAntiguedad`,
+      {}
+    );
+  }
+
+  obtenerTickets(model: ITicketsRequest): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/ObtenerTickets`, model);
   }
 }
