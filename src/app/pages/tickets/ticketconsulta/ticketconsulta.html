@@ -5,13 +5,13 @@
       <div class="w-full">
         <p-floatLabel class="w-full">
           <p-inputNumber
-            id="txtFolio"
+            inputId="txtFolio"
             [(ngModel)]="SelectedFolioValue"
             class="w-full"
             mode="decimal"
-            [minFractionDigits]="0"
-            [maxFractionDigits]="0"
             [useGrouping]="false"
+            [showClear]="true"
+            fluid="true"
           />
           <label for="txtFolio">Folio</label>
         </p-floatLabel>
@@ -75,32 +75,31 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
-      <div class="col-span-1 w-full">
+      <div class="w-full">
         <p-floatLabel class="w-full">
           <p-select
             [(ngModel)]="selectedRangoAntiguedadValue"
             [options]="opcionesRangoAntiguedad()"
-            inputId="selAntiguedad"
+            inputId="selRangoAntiguedad"
             optionLabel="name"
             class="w-full"
             emptyFilterMessage="Sin resultados"
             emptyMessage="Sin resultados"
             [showClear]="true"
           />
-          <label for="selAntiguedad">Antigüedad</label>
+          <label for="selRangoAntiguedad">Antigüedad</label>
         </p-floatLabel>
       </div>
       @if(selectedRangoAntiguedadValue()){
-      <div class="col-span-1 w-full">
+      <div class="w-full">
         <p-floatLabel class="w-full">
           <p-inputNumber
-            id="txtAntiguedad"
+            inputId="txtAntiguedad"
             [(ngModel)]="selectedAntiguedadValue"
-            class="w-full"
             mode="decimal"
-            [minFractionDigits]="0"
-            [maxFractionDigits]="0"
             [useGrouping]="false"
+            [showClear]="true"
+            fluid="true"
           />
           <label for="txtAntiguedad">Días</label>
         </p-floatLabel>
@@ -161,14 +160,49 @@
 <div class="card">
   <div class="font-semibold text-2xl text-primary mb-5">Resultados de búsqueda</div>
   <div class="font-semibold text-primary mb-5">{{ totalTickets() }} Tickets encontrados</div>
-  <p-table [value]="arrTickets()" [tableStyle]="{ 'min-width': '50rem' }">
+  <p-table
+    [value]="arrTickets()"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rows]="100"
+    [paginator]="true"
+    [globalFilterFields]="['folio']"
+    [scrollable]="true"
+  >
     <ng-template #header>
       <tr>
-        <th>Folio</th>
-        <th>Estatus</th>
-        <th>Antigüedad</th>
-        <th>En asignación</th>
-        <th>Tipo de solicitud</th>
+        <th pSortableColumn="folio" style="width: 10%">
+          <div class="flex items-center gap-2">
+            Folio
+            <p-sortIcon field="folio" />
+          </div>
+        </th>
+        <th style="width: 5%">
+          <div class="flex items-center gap-2">Estatus</div>
+        </th>
+        <th style="width: 15%">
+          <div class="flex items-center gap-2">Antigüedad</div>
+        </th>
+        <th style="width: 15%">
+          <div class="flex items-center gap-2">En asignación</div>
+        </th>
+        <th style="width: 50%">
+          <div class="flex items-center gap-2">Tipo de solicitud</div>
+        </th>
+        <th style="width: 5%"></th>
+      </tr>
+      <tr>
+        <th style="width: 5% !important">
+          <p-columnFilter
+            type="text"
+            field="folio"
+            placeholder="Buscar folio"
+            filterOn="input"
+            style="width: 5%"
+          ></p-columnFilter>
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
         <th></th>
       </tr>
     </ng-template>
@@ -183,7 +217,9 @@
         <td>{{ calcularAntiguedad(ticket.fecha_alta) }}</td>
         <td>{{ calcularAntiguedadAsignacion(ticket.fecha_asignacion, ticket.fecha_cierre) }}</td>
         <td [innerHTML]="generaTipoSolicitud(ticket)"></td>
-        <td><i pTooltip="Detalle" tooltipPosition="top" class="pi pi-receipt !text-2xl"></i></td>
+        <td>
+          <i pTooltip="Detalle" tooltipPosition="top" class="pi pi-receipt !text-2xl"></i>
+        </td>
       </tr>
     </ng-template>
   </p-table>
