@@ -1,0 +1,12 @@
+::ng-deep #filterFolio .p-inputtext {
+  width: 100px !important;
+}
+::ng-deep #filterAntiguedad .p-inputtext {
+  width: 150px !important;
+}
+::ng-deep #filterAsignacion .p-inputtext {
+  width: 150px !important;
+}
+::ng-deep #filterSolicitud- .p-inputtext {
+  width: 150px !important;
+}

@@ -12,6 +12,7 @@ import {
 import { Ticketservice } from '../../../core/services/ticket/ticketservice';
 import { IEntTickets, ITicketsRequest } from '../interfaces/IEntTicketParam';
 import { ConfirmationService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ticketconsulta',
@@ -24,7 +25,8 @@ export class Ticketconsulta {
   constructor(
     private primengConfig: PrimeNG,
     private ticketService: Ticketservice,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
   ngOnInit() {
     setSpanishLocale(this.primengConfig);
@@ -172,6 +174,9 @@ export class Ticketconsulta {
       next: (response) => {
         if (response.exito) {
           this.arrTickets.set(response.datalist);
+          const columnasCalculadas = this.calcularColumnasTickets(response.datalist);
+
+          this.arrTickets.set(columnasCalculadas);
           this.totalTickets.set(this.arrTickets().length ?? 0);
         } else {
           this.confirmationService.confirm({
@@ -259,5 +264,28 @@ export class Ticketconsulta {
     this.totalTickets.set(0);
 
     this.arrTickets.set([]);
+  }
+
+  calcularColumnasTickets(tickets: IEntTickets[]): IEntTickets[] {
+    if (!tickets || tickets.length === 0) {
+      return [];
+    }
+
+    return tickets.map((ticket) => {
+      return {
+        ...ticket,
+
+        antiguedad_calculada: this.calcularAntiguedad(ticket.fecha_alta),
+        asignacion_calculada: this.calcularAntiguedadAsignacion(
+          ticket.fecha_asignacion,
+          ticket.fecha_cierre
+        ),
+        solicitud_calculada: this.generaTipoSolicitud(ticket),
+      };
+    });
+  }
+
+  irDetalle(folio: number): void {
+    this.router.navigate(['/tickets', 'detalle', folio]);
   }
 }

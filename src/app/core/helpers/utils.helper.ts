@@ -22,10 +22,19 @@ export function construirMenu(flatMenu: IMenu[]): MenuItem[] {
   const tree: MenuItem[] = [];
 
   for (const item of flatMenu) {
+    // let activeOptions = {};
+    // let targetRoute = item.fcRuta;
+
+    // if (item.fcRuta === '/tickets/consulta' || item.fcRuta === 'tickets/consulta') {
+    //   targetRoute = '/tickets/consulta';
+    //   activeOptions = { exact: false };
+    // }
     const node: MenuItem = {
       label: item.fcDescripcion,
       icon: item.fcIcono || 'pi pi-fw pi-circle',
       routerLink: [item.fcRuta],
+      // routerLink: [targetRoute],
+      // routerLinkActiveOptions: activeOptions,
       ...(flatMenu.some((m) => m.fiMenuPadre === item.pkMenu) ? { items: [] } : {}),
     };
     map.set(item.pkMenu, node);

@@ -22,9 +22,9 @@ export interface IEntTicketParam {
 export interface IEntTickets {
   folio: number;
 
-  fecha_alta?: Date | null;
-  fecha_asignacion?: Date | null;
-  fecha_cierre?: Date | null;
+  fecha_alta: Date;
+  fecha_asignacion: Date;
+  fecha_cierre: Date;
 
   usuario_creacion: string;
   areas: string;
@@ -41,6 +41,10 @@ export interface IEntTickets {
   minutos_a_cobrar?: number | null;
 
   usuario_que_atendio: string;
+
+  antiguedad_calculada: string;
+  asignacion_calculada: string;
+  solicitud_calculada: string;
 }
 
 export interface ITicketsRequest {
