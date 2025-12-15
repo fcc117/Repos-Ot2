@@ -240,7 +240,7 @@ export class Ticketconsulta {
     if (ticket.referente_a) partes.push(`${ticket.referente_a}`);
     if (ticket.usuario_creacion)
       partes.push(
-        `<br>Solicitó: <span class="text-shadow-black">${ticket.usuario_creacion}</span>`
+        `<br>Solicitó: <span class="text-shadow-black font-bold">${ticket.usuario_creacion}</span>`
       );
 
     return partes.join(' / ');

@@ -1,0 +1,36 @@
+export interface IEntDetalleTicket {
+  folio: number;
+  id_area: number;
+  area: string;
+  id_requerimiento: number;
+  tipo_requerimiento: string;
+  prioridad: string;
+  folio_referente_a?: number;
+  Nombre_referente: string;
+  unidad_negocio: string;
+  id_estatus: number;
+  estatus: string;
+  folio_honestel: string;
+  descripcion: string;
+  fecha_alta?: Date;
+  fecha_asignacion?: Date;
+  fecha_cierre?: Date;
+  usuario_llave_maestra_creacion: string;
+  nombre_usuario_creacion: string;
+  celular_usuario_creacion: string;
+  usuario_llave_maestra_asignacion: string;
+  nombre_usuario_asignacion: string;
+  celular_usuario_asignacion: string;
+  extension_usuario_creacion: string;
+  extension_usuario_asignacion: string;
+  centro_de_costos_cobro: string;
+  horas_a_cobrar?: number;
+  minutos_a_cobrar?: number;
+  fecha_hora_alta?: Date;
+  tipo_Problema_Solicitud: string;
+  EstadoAtencion: string;
+  Escalado: boolean;
+  tipo_incidente: string;
+  foliosAsociados: string[];
+  folio_ada: string;
+}

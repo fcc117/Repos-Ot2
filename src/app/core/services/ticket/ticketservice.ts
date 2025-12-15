@@ -102,4 +102,10 @@ export class Ticketservice {
   obtenerTickets(model: ITicketsRequest): Observable<IResponseData> {
     return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/ObtenerTickets`, model);
   }
+
+  obtenerDetalleTicket(folio: number): Observable<IResponseData> {
+    return this._httpclient.post<IResponseData>(`${_config.baseUrl}/Ticket/ObtenerDetalleTicket`, {
+      folio,
+    });
+  }
 }

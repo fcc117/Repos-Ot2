@@ -25,4 +25,5 @@ export interface IUserData {
   fdFechaIngreso?: string;
   fnIdGeneralista?: number;
   menu?: IMenu[];
+  lstRolesUsuario?: [];
 }

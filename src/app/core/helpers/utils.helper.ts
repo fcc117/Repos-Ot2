@@ -17,6 +17,19 @@ export function obtenerNumeroEmpleado(): string {
   }
 }
 
+export function obtenerRolesUsuarios(): number[] {
+  const userData = localStorage.getItem('user_data');
+  if (!userData) return [];
+
+  try {
+    const result = JSON.parse(userData);
+    return (result.lstRolesUsuario || []).map((r: any) => r.fkIdRol);
+  } catch {
+    console.warn('Error al obtener: obtenerNumeroEmpleado');
+    return [];
+  }
+}
+
 export function construirMenu(flatMenu: IMenu[]): MenuItem[] {
   const map = new Map<number, MenuItem>();
   const tree: MenuItem[] = [];
@@ -166,7 +179,6 @@ export function obtenerAntiguedad(fechaAlta: Date | string): string {
   const inicio = new Date(fechaAlta);
   const hoy = new Date();
 
-  // Si es el mismo día → calcular horas
   if (
     inicio.getFullYear() === hoy.getFullYear() &&
     inicio.getMonth() === hoy.getMonth() &&
@@ -177,7 +189,6 @@ export function obtenerAntiguedad(fechaAlta: Date | string): string {
     return diffHours === 1 ? `${diffHours} hora` : `${diffHours} horas`;
   }
 
-  // Caso normal → calcular años, meses, días
   let años = hoy.getFullYear() - inicio.getFullYear();
   let meses = hoy.getMonth() - inicio.getMonth();
   let dias = hoy.getDate() - inicio.getDate();
@@ -210,7 +221,6 @@ export function obtenerAntiguedadAsignacion(
   const inicio = new Date(fechaInicio);
   const fin = fechaFin ? new Date(fechaFin) : new Date();
 
-  // Si las fechas son iguales en día, mes y año → calcular horas
   if (
     inicio.getFullYear() === fin.getFullYear() &&
     inicio.getMonth() === fin.getMonth() &&
@@ -221,7 +231,6 @@ export function obtenerAntiguedadAsignacion(
     return diffHours === 1 ? `${diffHours} hora` : `${diffHours} horas`;
   }
 
-  // Caso normal: calcular años, meses, días
   let años = fin.getFullYear() - inicio.getFullYear();
   let meses = fin.getMonth() - inicio.getMonth();
   let dias = fin.getDate() - inicio.getDate();
@@ -243,4 +252,9 @@ export function obtenerAntiguedadAsignacion(
   if (dias > 0) partes.push(`${dias} día${dias > 1 ? 's' : ''}`);
 
   return partes.length > 0 ? partes.join(' ') : '0 días';
+}
+
+export function toNumeroSafe(value: string | null): number {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
 }

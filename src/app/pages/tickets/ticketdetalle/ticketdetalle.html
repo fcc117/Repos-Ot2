@@ -1,15 +1,21 @@
 <div class="card">
-  <div class="font-semibold text-2xl text-primary mb-5">Detalle del ticket {{ folio }}</div>
+  <div class="font-semibold text-2xl text-primary mb-5">
+    Detalle del ticket {{ detalleTicket()?.folio }}
+  </div>
   <div class="flex flex-col gap-6 w-full">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
       <div class="w-full">
         <label class="font-bold">Estatus: </label>
-        <span class=""></span>
+        <span>{{ detalleTicket()?.estatus }}</span>
       </div>
+
+      @if(mostrarPrioridad()){
       <div class="w-full">
         <label class="font-bold">Prioridad: </label>
-        <span class=""></span>
+        <span class="">{{ detalleTicket()?.prioridad }}</span>
       </div>
+      }
+
       <div class="w-full">
         <label class="font-bold">Estatus VoBo: </label>
         <span class=""></span>
@@ -43,12 +49,12 @@
         <span class=""></span>
       </div>
       <div class="w-full">
-        <label class="font-bold">Área:</label>
-        <span class=""></span>
+        <label class="font-bold">Área: </label>
+        <span class="">{{ detalleTicket()?.area }}</span>
       </div>
       <div class="w-full">
         <label class="font-bold">Tipo de solictud:</label>
-        <span class=""></span>
+        <span class="">{{ detalleTicket()?.tipo_requerimiento }}</span>
       </div>
       <div class="w-full">
         <label class="font-bold">Unidad de negocio:</label>
@@ -113,3 +119,4 @@
     </div>
   </div>
 </div>
+<p-confirmDialog [position]="'top'"></p-confirmDialog>

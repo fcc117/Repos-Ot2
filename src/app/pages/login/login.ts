@@ -56,6 +56,7 @@ export class Login {
             fcNombre: response.data.fcNombre,
             fcPuesto: response.data.fcPuesto,
             menu: response.objectlist,
+            lstRolesUsuario: response.data.lstRolesUsuario,
           };
 
           const segundos = this.convertMinToSeg(response.expireIn);
